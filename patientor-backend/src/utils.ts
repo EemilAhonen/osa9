@@ -1,13 +1,28 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NewPatientEntry, Gender } from './types';
+import { NewPatient, Gender, HealthCheckEntry } from './types';
 
-const toNewPatientEntry = (object: any): NewPatientEntry => {
+export const toNewEntry = (object: any): HealthCheckEntry => {
+  return {
+    id: object.date,
+    date: object.date,
+    specialist: object.specialist,
+    type: object.type,
+    description: object.description,
+    healthCheckRating: Number(object.healthCheckRating),
+  };
+};
+
+export const toNewPatient = (object: any): NewPatient => {
   return {
     name: parseString(object.name),
     dateOfBirth: parseDate(object.dateOfBirth),
     ssn: parseString(object.ssn),
     gender: parseGender(object.gender),
     occupation: parseString(object.occupation),
+    entries: object.entries,
   };
 };
 
@@ -43,5 +58,3 @@ const parseGender = (gender: any): Gender => {
   }
   return gender;
 };
-
-export default toNewPatientEntry;

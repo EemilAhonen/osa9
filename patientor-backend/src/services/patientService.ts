@@ -1,39 +1,60 @@
-import patientData from '../../data/patients.json';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import patientData from '../../data/patients';
 import {
-  NewPatientEntry,
-  NonSensitivePatientEntry,
-  PatientEntry,
+  HealthCheckEntry,
+  NewPatient,
+  NonSensitivePatient,
+  Patient,
 } from '../types';
-import toNewPatientEntry from '../utils';
+import { toNewPatient } from '../utils';
 
-const patientEntries: PatientEntry[] = patientData.map((obj) => {
-  const object = toNewPatientEntry(obj) as PatientEntry;
+const patientEntries: Patient[] = patientData.map((obj) => {
+  const object = toNewPatient(obj) as Patient;
   object.id = obj.id;
   return object;
 });
 
-const getEntries = (): NonSensitivePatientEntry[] => {
+const getEntries = (): NonSensitivePatient[] => {
   return patientEntries.map(
-    ({ id, name, dateOfBirth, gender, occupation }) => ({
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => ({
       id,
       name,
       dateOfBirth,
       gender,
       occupation,
+      entries,
     })
   );
 };
 
-const addEntry = (entry: NewPatientEntry): PatientEntry => {
-  const newPatientEntry = {
+const getEntry = (id: string): Patient => {
+  return patientEntries.filter((x) => x.id === id)[0];
+};
+
+const addEntry = (entry: NewPatient): Patient => {
+  const newPatient = {
     id: (patientData.length + 1).toString(),
     ...entry,
   };
-  patientEntries.push(newPatientEntry);
+  patientEntries.push(newPatient);
+  return newPatient;
+};
+
+const addPatientEntry = (
+  entry: HealthCheckEntry,
+  patientId: string
+): HealthCheckEntry => {
+  const newPatientEntry = {
+    ...entry,
+    id: entry.date,
+  };
+  patientEntries.find((x) => x.id === patientId)?.entries.push(newPatientEntry);
   return newPatientEntry;
 };
 
 export default {
   getEntries,
   addEntry,
+  getEntry,
+  addPatientEntry,
 };
